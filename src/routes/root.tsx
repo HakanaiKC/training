@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import { createContact, getContacts } from "../contact";
 import { useEffect, useState } from "react";
-import './root.css'
+import "./root.css";
 
 // export async function loader({ request }) {
 //   const url = new URL(request.url);
@@ -33,7 +33,6 @@ export default function Root() {
 
   async function handleGetListContacts() {
     const contacts = await getContacts();
-    console.log(contacts);
     setContacts(contacts);
   }
 
@@ -45,7 +44,7 @@ export default function Root() {
 
   useEffect(() => {
     handleGetListContacts();
-  }, [])
+  }, [contacts]);
 
   const searching =
     navigation.location &&
@@ -70,6 +69,7 @@ export default function Root() {
                 submit(event.currentTarget.form, {
                   replace: !isFirstSearch,
                 });
+                setQ(event.target.value);
               }}
             />
             <div id="search-spinner" aria-hidden hidden={!searching} />

@@ -8,6 +8,7 @@ import LoginPage from "./pages/Login";
 import Contact from "./routes/contact";
 import Root from "./routes/root";
 import EditContact from "./routes/edit";
+import { destroyAction } from "./routes/destroy";
 
 const router = createBrowserRouter([
   {
@@ -19,14 +20,21 @@ const router = createBrowserRouter([
     path: "/contacts",
     element: <Root />,
     errorElement: <ErrorPage />,
-    children: [{
-      path: "/contacts/:contactId",
-      element: <Contact />
-    }, {
-      path: "/contacts/edit/:contactId",
-      element: <EditContact />
-    }]
-  }
+    children: [
+      {
+        path: "/contacts/:contactId",
+        element: <Contact />,
+      },
+      {
+        path: "/contacts/edit/:contactId",
+        element: <EditContact />,
+      },
+      {
+        path: "/contacts/:contactId/destroy",
+        action: destroyAction,
+      },
+    ],
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Form, useFetcher, useNavigate, useParams } from "react-router-dom";
-import { getContact } from "../contact";
+import { deleteContact, getContact } from "../contact";
+import { DestroyContact } from "./destroy";
 
 // export async function loaderContact({ params }: any) {
 //   const contact = await getContact(params.contactId);
@@ -21,20 +22,18 @@ import { getContact } from "../contact";
 //   });
 // }
 
-
 export default function Contact() {
-  const [contact, setContact] = useState<any>([])
-  let params = useParams();
+  const [contact, setContact] = useState<any>([]);
+  const params = useParams();
   const navigate = useNavigate();
 
-  function handleEdit(){
-  navigate("/contacts/edit/"+params.contactId)
+  function handleEdit() {
+    navigate("/contacts/edit/" + params.contactId);
   }
+
   async function getDetailsContact() {
-    console.log(params);
     const contact = await getContact(params.contactId);
-    console.log(contact);
-    
+
     if (!contact) {
       throw new Response("", {
         status: 404,
@@ -45,8 +44,8 @@ export default function Contact() {
   }
 
   useEffect(() => {
-    getDetailsContact()
-  }, [params.contactId])
+    getDetailsContact();
+  }, [params.contactId]);
 
   return (
     <div id="contact">
@@ -84,7 +83,9 @@ export default function Contact() {
 
         <div>
           <form>
-            <button type="submit" onClick={handleEdit}>Edit</button>
+            <button type="submit" onClick={handleEdit}>
+              Edit
+            </button>
           </form>
           <Form
             method="post"
