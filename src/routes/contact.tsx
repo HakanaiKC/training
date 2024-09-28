@@ -1,27 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Form, useFetcher, useLoaderData } from "react-router-dom";
-import { getContact, updateContact } from "../contact";
+import { useEffect, useState } from "react";
+import { Form, useFetcher, useNavigate, useParams } from "react-router-dom";
+import { getContact } from "../contact";
 
-export async function loaderContact({ params }: any) {
-  const contact = await getContact(params.contactId);
-  if (!contact) {
-    throw new Response("", {
-      status: 404,
-      statusText: "Not Found",
-    });
-  }
-  return { contact };
-}
+// export async function loaderContact({ params }: any) {
+//   const contact = await getContact(params.contactId);
+//   if (!contact) {
+//     throw new Response("", {
+//       status: 404,
+//       statusText: "Not Found",
+//     });
+//   }
+//   return { contact };
+// }
 
-export async function actionContact({ request, params }) {
-  const formData = await request.formData();
-  return updateContact(params.contactId, {
-    favorite: formData.get("favorite") === "true",
-  });
-}
+// export async function actionContact({ request, params }) {
+//   const formData = await request.formData();
+//   return updateContact(params.contactId, {
+//     favorite: formData.get("favorite") === "true",
+//   });
+// }
+
 
 export default function Contact() {
-  const { contact }: any = useLoaderData();
+  const [contact, setContact] = useState<any>([])
+  let params = useParams();
+  const navigate = useNavigate();
+
+  function handleEdit(){
+  navigate("/contacts/edit/"+params.contactId)
+  }
+  async function getDetailsContact() {
+    console.log(params);
+    const contact = await getContact(params.contactId);
+    console.log(contact);
+    
+    if (!contact) {
+      throw new Response("", {
+        status: 404,
+        statusText: "Not Found",
+      });
+    }
+    setContact(contact);
+  }
+
+  useEffect(() => {
+    getDetailsContact()
+  }, [params.contactId])
 
   return (
     <div id="contact">
@@ -58,9 +83,9 @@ export default function Contact() {
         {contact.notes && <p>{contact.notes}</p>}
 
         <div>
-          <Form action="edit">
-            <button type="submit">Edit</button>
-          </Form>
+          <form>
+            <button type="submit" onClick={handleEdit}>Edit</button>
+          </form>
           <Form
             method="post"
             action="destroy"

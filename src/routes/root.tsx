@@ -10,42 +10,53 @@ import {
   useOutlet,
 } from "react-router-dom";
 import { createContact, getContacts } from "../contact";
-import { useEffect } from "react";
-import { AuthProvider } from "../services/useAuth";
+import { useEffect, useState } from "react";
+import './root.css'
 
-export async function loader({ request }) {
-  const url = new URL(request.url);
-  const q = url.searchParams.get("q");
-  const contacts = await getContacts(q);
-  return { contacts, q };
-}
+// export async function loader({ request }) {
+//   const url = new URL(request.url);
+//   const q = url.searchParams.get("q");
+//   const contacts = await getContacts(q);
+//   return { contacts, q };
+// }
 
-export async function action() {
-  const contact = await createContact();
-  return redirect(`/contacts/${contact.id}/edit`);
-}
+// export async function action() {
+//   const contact = await createContact();
+//   return redirect(`/contacts/${contact.id}/edit`);
+// }
 
 export default function Root() {
-  const { contacts, q }: any = useLoaderData();
   const navigation = useNavigation();
   const submit = useSubmit();
+  const [contacts, setContacts] = useState<any>([]);
+  const [q, setQ] = useState<any>(null);
 
-  const { userPromise } = useLoaderData();
+  async function handleGetListContacts() {
+    const contacts = await getContacts();
+    console.log(contacts);
+    setContacts(contacts);
+  }
+
+  async function handleCreateData() {
+    const contact = await createContact();
+    console.log(contact);
+    handleGetListContacts();
+  }
+
+  useEffect(() => {
+    handleGetListContacts();
+  }, [])
 
   const searching =
     navigation.location &&
     new URLSearchParams(navigation.location.search).has("q");
 
-  useEffect(() => {
-    document.getElementById("q").value = q;
-  }, [q]);
-
   return (
-    <AuthProvider userData={user}>
+    <div className="root">
       <div id="sidebar">
         <h1>React Router Contacts</h1>
         <div>
-          <Form id="search-form" role="search">
+          <form id="search-form" role="search">
             <input
               id="q"
               aria-label="Search contacts"
@@ -63,10 +74,10 @@ export default function Root() {
             />
             <div id="search-spinner" aria-hidden hidden={!searching} />
             <div className="sr-only" aria-live="polite"></div>
-          </Form>
-          <Form method="post">
-            <button type="submit">New</button>
-          </Form>
+          </form>
+          <div>
+            <button onClick={handleCreateData}>New</button>
+          </div>
         </div>
         <nav>
           {contacts.length ? (
@@ -74,7 +85,7 @@ export default function Root() {
               {contacts.map((contact: any) => (
                 <li key={contact.id}>
                   <NavLink
-                    to={`contacts/${contact.id}`}
+                    to={`/contacts/${contact.id}`}
                     className={({ isActive, isPending }) =>
                       isActive ? "active" : isPending ? "pending" : ""
                     }
@@ -104,6 +115,6 @@ export default function Root() {
       >
         <Outlet />
       </div>
-    </AuthProvider>
+    </div>
   );
 }

@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { updateContact } from "../contact";
+import { useState } from "react";
 
-export async function actionEdit({ request, params }: any) {
-  const formData = await request.formData();
-  const updates = Object.fromEntries(formData);
-  await updateContact(params.contactId, updates);
-  return redirect(`/contacts/${params.contactId}`);
-}
+// export async function actionEdit({ request, params }: any) {
+//   const formData = await request.formData();
+//   const updates = Object.fromEntries(formData);
+//   await updateContact(params.contactId, updates);
+//   return redirect(`/contacts/${params.contactId}`);
+// }
+
+
 
 export default function EditContact() {
-  const { contact }: any = useLoaderData();
   const navigate = useNavigate();
+  const [contact, setContact] = useState<any>([])
 
   return (
     <Form method="post" id="contact-form">
