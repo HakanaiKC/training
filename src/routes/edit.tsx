@@ -2,6 +2,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { getContact, getContacts, updateContact } from "../contact";
 import { useEffect, useState } from "react";
+import { useContact } from "./root";
 
 // export async function actionEdit({ request, params }: any) {
 //   const formData = await request.formData();
@@ -9,45 +10,66 @@ import { useEffect, useState } from "react";
 //   await updateContact(params.contactId, updates);
 //   return redirect(`/contacts/${params.contactId}`);
 // }
-
+interface Contact {
+  id: string,
+  createdAt: number,
+  firstname: string,
+  lastname: string,
+  twitter: string,
+  avatar: string,
+  notes: string,
+}
 export default function EditContact() {
   const navigate = useNavigate();
   const params = useParams();
+  const { contacts, setContacts: setListContacts } = useContact();
 
-  const [contact, setContact] = useState<any>({});
-  const [firstname, setFirstname] = useState<string>("");
-  const [lastname, setLastname] = useState<string>("");
-  const [twitter, setTwitter] = useState<string>("");
-  const [avatarURL, setAvatarURL] = useState<string>("");
-  const [notes, setNote] = useState<string>("");
+  const [contact, setContact] = useState<Contact | any>({
+    id: "",
+    createdAt: 0,
+    firstname: "",
+    lastname: "",
+    twitter: "",
+    avatar: "",
+    notes: "",
+  });
 
   async function handleSave(event: any) {
     event.preventDefault();
     const userInfo = {
-      first: firstname,
-      last: lastname,
-      twitter: twitter,
-      avatar: avatarURL,
-      notes: notes,
+      first: contact.first,
+      last: contact.last,
+      twitter: contact.twitter,
+      avatar: contact.avatar,
+      notes: contact.notes,
     };
-    setContact(userInfo);
+
     await updateContact(params.contactId, userInfo);
+    handleGetListContacts()
+    setContact(userInfo)
+
     navigate(`/contacts/${params.contactId}`);
+  }
+  async function handleGetListContacts() {
+    const listContacts = await getContacts();
+    console.log(listContacts);
+    setListContacts(listContacts)
+  }
+  async function fetchContact() {
+    const contactData = await getContact(params.contactId);
+    console.log(contactData);
+
+    setContact(contactData);
   }
 
   useEffect(() => {
-    async function fetchContact() {
-      const contactData = await getContact(params.contactId);
-      setContact(contactData);
-      setFirstname(contactData.first);
-      setLastname(contactData.last);
-      setTwitter(contactData.twitter);
-      setAvatarURL(contactData.avatar);
-      setNote(contactData.notes);
-    }
-
     fetchContact();
   }, [params.contactId]);
+
+  const handleChangeContact = (data: any) => {
+    console.log({ ...contact, [data.target.name]: data.target.value });
+    setContact({ ...contact, [data.target.name]: data.target.value })
+  }
 
   return (
     <form method="post" id="contact-form">
@@ -58,7 +80,7 @@ export default function EditContact() {
           aria-label="First name"
           type="text"
           name="first"
-          onChange={(e) => setFirstname(e.target.value)}
+          onChange={(e) => handleChangeContact(e)}
           defaultValue={contact?.first}
         />
         <input
@@ -66,7 +88,7 @@ export default function EditContact() {
           aria-label="Last name"
           type="text"
           name="last"
-          onChange={(e) => setLastname(e.target.value)}
+          onChange={(e) => handleChangeContact(e)}
           defaultValue={contact?.last}
         />
       </p>
@@ -76,7 +98,7 @@ export default function EditContact() {
           type="text"
           name="twitter"
           placeholder="@jack"
-          onChange={(e) => setTwitter(e.target.value)}
+          onChange={(e) => handleChangeContact(e)}
           defaultValue={contact?.twitter}
         />
       </label>
@@ -87,7 +109,7 @@ export default function EditContact() {
           aria-label="Avatar URL"
           type="text"
           name="avatar"
-          onChange={(e) => setAvatarURL(e.target.value)}
+          onChange={(e) => handleChangeContact(e)}
           defaultValue={contact?.avatar}
         />
       </label>
@@ -97,7 +119,7 @@ export default function EditContact() {
           name="notes"
           defaultValue={contact?.notes}
           rows={6}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => handleChangeContact(e)}
         />
       </label>
       <p>

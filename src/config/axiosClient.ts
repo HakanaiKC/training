@@ -9,15 +9,17 @@ const axiosInstance: AxiosInstance = axios.create({
     },
 });
 
-// axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-//     const token: string = AuthService.getToken() || null;
-//     token && (config.headers!.Authorization = `Bearer ${token}`);
-//     config.maxBodyLength = Infinity
-//     return config;
-// }, async (error: AxiosError) => {
-//     console.log('error: ', error);
-//     return await Promise.reject(error);
-// });
+axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem("token")
+    console.log(token);
+    
+    token && (config.headers!.Authorization = `Bearer ${token}`);
+    config.maxBodyLength = Infinity
+    return config;
+}, async (error: AxiosError) => {
+    console.log('error: ', error);
+    return await Promise.reject(error);
+});
 
 // axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 //     return response.data;

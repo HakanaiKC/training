@@ -8,7 +8,10 @@ import LoginPage from "./pages/Login";
 import Contact from "./routes/contact";
 import Root from "./routes/root";
 import EditContact from "./routes/edit";
-import { destroyAction } from "./routes/destroy";
+
+import AuthComponent from "./pages/Auth";
+
+
 
 const router = createBrowserRouter([
   {
@@ -18,7 +21,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/contacts",
-    element: <Root />,
+    element: <AuthComponent>
+      <Root />
+    </AuthComponent>,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -31,7 +36,6 @@ const router = createBrowserRouter([
       },
       {
         path: "/contacts/:contactId/destroy",
-        action: destroyAction,
       },
     ],
   },

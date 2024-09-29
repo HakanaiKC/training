@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Form, useFetcher, useNavigate, useParams } from "react-router-dom";
 import { deleteContact, getContact } from "../contact";
 import { DestroyContact } from "./destroy";
+import productService from "../services/productService";
 
 // export async function loaderContact({ params }: any) {
 //   const contact = await getContact(params.contactId);
@@ -31,6 +32,17 @@ export default function Contact() {
     navigate("/contacts/edit/" + params.contactId);
   }
 
+  async function handleDelete(){
+    await deleteContact(params.contactId);
+    navigate("/contacts")
+  }
+
+  async function getListProduct(){
+    const product = await productService.getProducts();
+    console.log(product);
+    
+  }
+
   async function getDetailsContact() {
     const contact = await getContact(params.contactId);
 
@@ -45,6 +57,7 @@ export default function Contact() {
 
   useEffect(() => {
     getDetailsContact();
+    getListProduct()
   }, [params.contactId]);
 
   return (
@@ -87,17 +100,17 @@ export default function Contact() {
               Edit
             </button>
           </form>
-          <Form
-            method="post"
-            action="destroy"
+          <div>
+          {/* <form
             onSubmit={(event) => {
               if (!confirm("Please confirm you want to delete this record.")) {
                 event.preventDefault();
               }
             }}
-          >
-            <button type="submit">Delete</button>
-          </Form>
+          > */}
+            <button type="submit" onClick={handleDelete}>Delete</button>
+            </div>
+          {/* </form> */}
         </div>
       </div>
     </div>

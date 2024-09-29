@@ -8,9 +8,10 @@ import {
   useNavigation,
   useSubmit,
   useOutlet,
+  useOutletContext,
 } from "react-router-dom";
 import { createContact, getContacts } from "../contact";
-import { useEffect, useState } from "react";
+import { ContextType, useEffect, useState } from "react";
 import "./root.css";
 
 // export async function loader({ request }) {
@@ -24,12 +25,12 @@ import "./root.css";
 //   const contact = await createContact();
 //   return redirect(`/contacts/${contact.id}/edit`);
 // }
+type ContextType = { contacts: any, setContacts:any };
 
 export default function Root() {
   const navigation = useNavigation();
   const submit = useSubmit();
   const [contacts, setContacts] = useState<any>([]);
-  const [q, setQ] = useState<any>(null);
 
   async function handleGetListContacts() {
     const contacts = await getContacts();
@@ -42,13 +43,21 @@ export default function Root() {
     handleGetListContacts();
   }
 
+  async function handleSearch(params){
+    const search = await getContacts(params)
+    console.log(search);
+    
+    setContacts(search)
+  }
+
   useEffect(() => {
     handleGetListContacts();
-  }, [contacts]);
+  }, []);
 
-  const searching =
-    navigation.location &&
-    new URLSearchParams(navigation.location.search).has("q");
+  // const searching =
+  //   navigation.location &&
+  //   new URLSearchParams(navigation.location.search).has("q");
+    
 
   return (
     <div className="root">
@@ -59,20 +68,11 @@ export default function Root() {
             <input
               id="q"
               aria-label="Search contacts"
-              className={searching ? "loading" : ""}
               placeholder="Search"
               type="search"
-              name="q"
-              defaultValue={q}
-              onChange={(event) => {
-                const isFirstSearch = q == null;
-                submit(event.currentTarget.form, {
-                  replace: !isFirstSearch,
-                });
-                setQ(event.target.value);
-              }}
+              onChange={e=>handleSearch(e.target.value)}
             />
-            <div id="search-spinner" aria-hidden hidden={!searching} />
+            {/* <div id="search-spinner" aria-hidden hidden={!searching} /> */}
             <div className="sr-only" aria-live="polite"></div>
           </form>
           <div>
@@ -113,8 +113,12 @@ export default function Root() {
         id="detail"
         className={navigation.state === "loading" ? "loading" : ""}
       >
-        <Outlet />
+        <Outlet context={{contacts, setContacts} satisfies ContextType}/>
       </div>
     </div>
   );
+}
+
+export function useContact() {
+  return useOutletContext<ContextType>();
 }
