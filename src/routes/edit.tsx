@@ -11,13 +11,13 @@ import { useContact } from "./root";
 //   return redirect(`/contacts/${params.contactId}`);
 // }
 interface Contact {
-  id: string,
-  createdAt: number,
-  firstname: string,
-  lastname: string,
-  twitter: string,
-  avatar: string,
-  notes: string,
+  id: string;
+  createdAt: number;
+  firstname: string;
+  lastname: string;
+  twitter: string;
+  avatar: string;
+  notes: string;
 }
 export default function EditContact() {
   const navigate = useNavigate();
@@ -45,15 +45,16 @@ export default function EditContact() {
     };
 
     await updateContact(params.contactId, userInfo);
-    handleGetListContacts()
-    setContact(userInfo)
+    handleGetListContacts();
+    setContact(userInfo);
 
     navigate(`/contacts/${params.contactId}`);
   }
+
   async function handleGetListContacts() {
     const listContacts = await getContacts();
     console.log(listContacts);
-    setListContacts(listContacts)
+    setListContacts(listContacts);
   }
   async function fetchContact() {
     const contactData = await getContact(params.contactId);
@@ -68,8 +69,8 @@ export default function EditContact() {
 
   const handleChangeContact = (data: any) => {
     console.log({ ...contact, [data.target.name]: data.target.value });
-    setContact({ ...contact, [data.target.name]: data.target.value })
-  }
+    setContact({ ...contact, [data.target.name]: data.target.value });
+  };
 
   return (
     <form method="post" id="contact-form">

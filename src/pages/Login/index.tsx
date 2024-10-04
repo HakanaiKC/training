@@ -20,7 +20,7 @@ const LoginPage = () => {
 
     const token = result.accessToken;
     localStorage.setItem("token", token);
-    navigate("/contacts");
+    navigate("/products");
   };
 
   return (

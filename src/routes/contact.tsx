@@ -32,15 +32,9 @@ export default function Contact() {
     navigate("/contacts/edit/" + params.contactId);
   }
 
-  async function handleDelete(){
+  async function handleDelete() {
     await deleteContact(params.contactId);
-    navigate("/contacts")
-  }
-
-  async function getListProduct(){
-    const product = await productService.getProducts();
-    console.log(product);
-    
+    navigate("/contacts");
   }
 
   async function getDetailsContact() {
@@ -57,7 +51,6 @@ export default function Contact() {
 
   useEffect(() => {
     getDetailsContact();
-    getListProduct()
   }, [params.contactId]);
 
   return (
@@ -101,15 +94,17 @@ export default function Contact() {
             </button>
           </form>
           <div>
-          {/* <form
+            {/* <form
             onSubmit={(event) => {
               if (!confirm("Please confirm you want to delete this record.")) {
                 event.preventDefault();
               }
             }}
           > */}
-            <button type="submit" onClick={handleDelete}>Delete</button>
-            </div>
+            <button type="submit" onClick={handleDelete}>
+              Delete
+            </button>
+          </div>
           {/* </form> */}
         </div>
       </div>

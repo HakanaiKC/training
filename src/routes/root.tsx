@@ -1,17 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Outlet,
-  useLoaderData,
-  Form,
-  redirect,
   NavLink,
   useNavigation,
-  useSubmit,
-  useOutlet,
   useOutletContext,
 } from "react-router-dom";
 import { createContact, getContacts } from "../contact";
-import { ContextType, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./root.css";
 
 // export async function loader({ request }) {
@@ -25,11 +20,10 @@ import "./root.css";
 //   const contact = await createContact();
 //   return redirect(`/contacts/${contact.id}/edit`);
 // }
-type ContextType = { contacts: any, setContacts:any };
+type ContextType = { contacts: any; setContacts: any };
 
 export default function Root() {
   const navigation = useNavigation();
-  const submit = useSubmit();
   const [contacts, setContacts] = useState<any>([]);
 
   async function handleGetListContacts() {
@@ -43,11 +37,11 @@ export default function Root() {
     handleGetListContacts();
   }
 
-  async function handleSearch(params){
-    const search = await getContacts(params)
+  async function handleSearch(params) {
+    const search = await getContacts(params);
     console.log(search);
-    
-    setContacts(search)
+
+    setContacts(search);
   }
 
   useEffect(() => {
@@ -57,7 +51,6 @@ export default function Root() {
   // const searching =
   //   navigation.location &&
   //   new URLSearchParams(navigation.location.search).has("q");
-    
 
   return (
     <div className="root">
@@ -70,7 +63,7 @@ export default function Root() {
               aria-label="Search contacts"
               placeholder="Search"
               type="search"
-              onChange={e=>handleSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
             {/* <div id="search-spinner" aria-hidden hidden={!searching} /> */}
             <div className="sr-only" aria-live="polite"></div>
@@ -107,13 +100,15 @@ export default function Root() {
               <i>No contacts</i>
             </p>
           )}
+          <NavLink to={"/products"}>Check Products</NavLink>
         </nav>
       </div>
       <div
         id="detail"
         className={navigation.state === "loading" ? "loading" : ""}
       >
-        <Outlet context={{contacts, setContacts} satisfies ContextType}/>
+        {/* <Outlet context={{ contacts, setContacts } satisfies ContextType} /> */}
+        <Outlet />
       </div>
     </div>
   );

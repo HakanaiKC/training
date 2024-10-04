@@ -8,10 +8,8 @@ import LoginPage from "./pages/Login";
 import Contact from "./routes/contact";
 import Root from "./routes/root";
 import EditContact from "./routes/edit";
-
 import AuthComponent from "./pages/Auth";
-
-
+import Product from "./routes/product";
 
 const router = createBrowserRouter([
   {
@@ -19,23 +17,40 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
+  // {
+  //   path: "/contacts",
+  //   element: (
+  //     <AuthComponent>
+  //       <Root />
+  //     </AuthComponent>
+  //   ),
+  //   errorElement: <ErrorPage />,
+  //   children: [
+  //     {
+  //       path: "/contacts/:contactId",
+  //       element: <Contact />,
+  //     },
+  //     {
+  //       path: "/contacts/edit/:contactId",
+  //       element: <EditContact />,
+  //     },
+  //     {
+  //       path: "/contacts/:contactId/destroy",
+  //     },
+  //   ],
+  // },
   {
-    path: "/contacts",
-    element: <AuthComponent>
-      <Root />
-    </AuthComponent>,
+    path: "/products",
+    element: (
+      <AuthComponent>
+        <Root />
+      </AuthComponent>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/contacts/:contactId",
-        element: <Contact />,
-      },
-      {
-        path: "/contacts/edit/:contactId",
-        element: <EditContact />,
-      },
-      {
-        path: "/contacts/:contactId/destroy",
+        path: "/products/",
+        element: <Product />,
       },
     ],
   },
