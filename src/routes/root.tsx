@@ -107,8 +107,7 @@ export default function Root() {
         id="detail"
         className={navigation.state === "loading" ? "loading" : ""}
       >
-        {/* <Outlet context={{ contacts, setContacts } satisfies ContextType} /> */}
-        <Outlet />
+        <Outlet context={{ contacts, setContacts } satisfies ContextType} />
       </div>
     </div>
   );

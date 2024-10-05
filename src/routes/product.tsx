@@ -11,44 +11,82 @@ import {
   Typography,
 } from "antd";
 import productService from "../services/productService";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { AppContext } from "../context/AppContext";
 
 export default function Product() {
-  const [dataProducts, setProducts] = useState<any>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [product, setProduct] = useState<any>({
     id: 0,
     title: "",
     price: 0,
-    discount: "",
+    discount: 0,
     rating: 0,
   });
+  const [isEdit, setIsEdit] = useState<boolean>()
+  const { dataProducts, setDataProducts } = useContext(AppContext)
 
-  async function getListProduct() {
-    const product = await productService.getProducts();
-    setProducts(product.products);
-  }
+  // async function getListProduct() {
+  //   const product = await productService.getProducts();
+  //   setDataProducts(product.products);
+  // }
 
   function handleOpen(data: any) {
     setIsModalOpen(true);
+    setIsEdit(true);
     setProduct({
       id: data.id,
       title: data.title,
       price: data.price,
+      rating: data.rating,
       discount: data.discountPercentage,
     });
   }
 
-  function handleEdit(e) {
+  function handleEdit(e: any) {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   }
 
   async function handleSave() {
-    const result = await productService.updateProduct(product.id, product);
-    setProducts({ ...dataProducts, result });
-    setIsModalOpen(false);
+    if (isEdit) {
+      const result = await productService.updateProduct(product.id, product);
+      if (result.status == 200) {
+        // console.log({ ...dataProducts, result });
+        // setDataProducts({ ...dataProducts, result });
+        const updateItem = result.data
+        const mappedProduct: any[] = dataProducts.map((product: any) =>
+          product.id === updateItem.id ? { ...product, ...updateItem } : product
+        );
+        setDataProducts(mappedProduct);
+        // console.log(mappedProduct);
+      }
+      setIsModalOpen(false);
+    } else {
+      const result = await productService.addProduct(product);
+      console.log(result.data);
+      const newItem = result.data
+      const listProduct = dataProducts
+
+      if (result.status == 201) {
+        listProduct.push(newItem)
+        setDataProducts(listProduct)
+      }
+      setIsModalOpen(false);
+    }
+  }
+
+  async function handleAdd() {
+    setIsModalOpen(true);
+    setIsEdit(false);
+    setProduct({
+      id: 0,
+      title: "",
+      price: 0,
+      discount: 0,
+      rating: 0
+    })
   }
 
   async function handleDelete(data: any) {
@@ -61,7 +99,7 @@ export default function Product() {
 
     try {
       const result = await productService.deleteProducts(data.id);
-      setProducts((prevProducts: any) =>
+      setDataProducts((prevProducts: any) =>
         prevProducts.filter((product: any) => product.id !== data.id)
       );
       console.log("Product deleted successfully:", result);
@@ -97,7 +135,7 @@ export default function Product() {
       key: "tags",
       render: (tags: any) => (
         <>
-          {tags.map((tag: any) => (
+          {tags && tags.map((tag: any) => (
             <Tag color="blue" key={tag}>
               {tag}
             </Tag>
@@ -112,7 +150,7 @@ export default function Product() {
     },
     {
       title: "Action",
-      render: (_, record: any) => (
+      render: (_: any, record: any) => (
         <Flex gap="small" wrap>
           <Button
             type="primary"
@@ -132,12 +170,9 @@ export default function Product() {
     },
   ];
 
-  useEffect(() => {
-    getListProduct();
-  }, []);
-
   return (
     <div id="product">
+      <Button onClick={handleAdd}>Add New</Button>
       {dataProducts && dataProducts.length > 0 ? (
         <Table dataSource={dataProducts} columns={columns} rowKey="id" />
       ) : (
@@ -145,7 +180,7 @@ export default function Product() {
       )}
 
       <Modal
-        title="EDIT SINGLE PRODUCT"
+        title={isEdit ? "EDIT SINGLE PRODUCT" : "CREATE SINGLE PRODUCT"}
         open={isModalOpen}
         onOk={() => setIsModalOpen(false)}
         onCancel={() => setIsModalOpen(false)}

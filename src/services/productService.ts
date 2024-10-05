@@ -10,7 +10,7 @@ const updateProduct = async (id: number, data: any) => {
     "https://dummyjson.com/products/" + id,
     data
   );
-  return res.data;
+  return res;
 };
 
 const deleteProducts = async (id: number) => {
@@ -20,4 +20,9 @@ const deleteProducts = async (id: number) => {
   return response.data;
 };
 
-export default { getProducts, deleteProducts, updateProduct };
+const addProduct = async (data: any)=>{
+  const res = await axiosInstance.post('https://dummyjson.com/products/add', data)
+  return res
+}
+
+export default { getProducts, deleteProducts, updateProduct, addProduct };

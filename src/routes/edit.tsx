@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from "react-router-dom";
 import { getContact, getContacts, updateContact } from "../contact";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useContact } from "./root";
+import { AppContext } from "../context/AppContext";
 
 // export async function actionEdit({ request, params }: any) {
 //   const formData = await request.formData();
@@ -23,6 +24,8 @@ export default function EditContact() {
   const navigate = useNavigate();
   const params = useParams();
   const { contacts, setContacts: setListContacts } = useContact();
+  const {dataProducts} = useContext(AppContext)
+  console.log(dataProducts);
 
   const [contact, setContact] = useState<Contact | any>({
     id: "",

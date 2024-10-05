@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Form, useFetcher, useNavigate, useParams } from "react-router-dom";
 import { deleteContact, getContact } from "../contact";
 import { DestroyContact } from "./destroy";
 import productService from "../services/productService";
+import { AppContext } from "../context/AppContext";
 
 // export async function loaderContact({ params }: any) {
 //   const contact = await getContact(params.contactId);
@@ -27,6 +28,8 @@ export default function Contact() {
   const [contact, setContact] = useState<any>([]);
   const params = useParams();
   const navigate = useNavigate();
+  const {dataProducts} = useContext(AppContext)
+console.log(dataProducts);
 
   function handleEdit() {
     navigate("/contacts/edit/" + params.contactId);
